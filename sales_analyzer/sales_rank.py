@@ -50,7 +50,7 @@ def sales_order_customer(
     customer_report = pd.concat([df_pivot, df_quantity, df_sales], axis= 'columns')
     # df_order_customer = merge_quantity_and_sales(df_quantity, df_sales)
 
-    return customer_report
+    return customer_report, df_grouped
 
 
 def sales_order_product(
@@ -99,4 +99,4 @@ def sales_order_product(
     product_report = pd.concat([df_pivot, df_quantity, df_sales], axis= 'columns')
     # df_order_customer = merge_quantity_and_sales(df_quantity, df_sales)
 
-    return product_report
+    return product_report, df_grouped

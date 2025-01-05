@@ -6,7 +6,7 @@ from analyze_tools import calculate_growth, generate_pivot_table
 
 def monthly_sales_and_revenue(
     raw_data: pd.DataFrame, valid_years: List[int]
-) -> pd.MultiIndex:
+) -> pd.DataFrame:
     """
     월별 매출 및 수익 집계 및 증감률/증감량 계산.
     """
@@ -45,4 +45,4 @@ def monthly_sales_and_revenue(
     df_monthly = df_pivot.swaplevel(0, 1, axis= 'columns').reindex(columns=column_order)
     monthly_report = pd.concat([df_monthly, df_qnt_monthly, df_sales_monthly], axis= 'columns')
 
-    return monthly_report
+    return monthly_report, df_grouped
