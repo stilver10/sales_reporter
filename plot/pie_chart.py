@@ -6,7 +6,7 @@ font_path = "C:/Windows/Fonts/malgun.ttf" # 사용할 폰트명 경로 삽입
 font = font_manager.FontProperties(fname = font_path).get_name()
 rc('font', family = font)
 
-def monthly_report_chart(
+def customer_report_chart(
     df_grouped: pd.DataFrame, valid_years: List[int]
 ) -> pd.MultiIndex:
 

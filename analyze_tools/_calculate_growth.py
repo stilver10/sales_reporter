@@ -6,7 +6,7 @@ def calculate_growth(
     valid_years: List[int],
     index_column: str,
     value_column: str,
-) -> pd.MultiIndex:
+) -> pd.DataFrame:
         
 
     # 데이터프레임 복사 및 기본 처리

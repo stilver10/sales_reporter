@@ -26,15 +26,14 @@ def load_sales_data(file_path: Path) -> pd.DataFrame:
 
 
         #  값의 무결성 확인 (수량*단가 == 금액) 
-        a = raw_data.apply(lambda row: row['수량'] * row['단가'], axis=1)
-        raw_data['무결성'] = raw_data['금액'] == a
+        integrity = raw_data.apply(lambda row: row['수량'] * row['단가'], axis=1)
+        raw_data['이상값'] = raw_data['금액'] != integrity
 
-        null_counts = raw_data.isnull().sum()
-        print("### Null 값 개수: ###\n", null_counts)
-        print("### 각 행의 Null 값: ###\n", raw_data[raw_data.isna().any(axis=1)])
-        
+        missing_value_counts = raw_data['이상값'].sum()
+        print(f'이상값 개수: {missing_value_counts}')
+        missing_value = raw_data[raw_data['이상값']]        
 
-        return raw_data
+        return raw_data, missing_value
 
     except FileNotFoundError:
         raise FileNotFoundError(f"파일을 찾을 수 없습니다: {file_path}")
