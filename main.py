@@ -10,12 +10,12 @@ def main():
     print(f'저장 파일 위치: {current_directory}')
 
     # 데이터베이스 파일 경로 설정
-    db_file_path = Path("C:/Users/stilv/OneDrive/바탕 화면/2018~2022 매출 데이터베이스.xlsx")
+    db_file_path = Path("C:/Users/stilv/Downloads/매출 데이터베이스.xlsx")
     print(f'db 파일 경로: {db_file_path}')
 
     # 원본 데이터 로드
     raw_data, missing_value = load_sales_data(db_file_path)
-    valid_years = calculate_years(raw_data, start_year = 2018, end_year = 2022)
+    valid_years = calculate_years(raw_data, start_year = 2020, end_year = 2024)
     print('조회년도:', valid_years)
 
     monthly_report, monthly_grouped = monthly_sales_and_revenue(raw_data, valid_years)

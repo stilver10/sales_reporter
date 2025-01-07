@@ -2,7 +2,7 @@ import pandas as pd
 from typing import List
 from analyze_tools import calculate_growth
 import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter
+from matplotlib.ticker import FuncFormatter, MaxNLocator
 import seaborn as sns
 
 plt.rcParams['axes.unicode_minus'] = False 
@@ -66,7 +66,7 @@ def yearly_report_chart(
     fig3.figure.suptitle('연도별 판매량 대비 매출액 분산도', y=1.05)
     for ax in fig3.axes.flat:
         ax.yaxis.set_major_formatter(FuncFormatter(million_formatter))
-        ax.set_ylabel('매출액 (백만원)')    
+        ax.set_ylabel('매출액 (백만원)')
 
 
 
@@ -80,27 +80,35 @@ def yearly_report_chart(
     df_growth.columns = ['매출월', '금액 증감량', '금액 증감률(%)']
     df_growth['매출월'] = df_growth['매출월'].astype(str)
 
-    fig4, ax = plt.subplots()
+    fig4, ax1 = plt.subplots()
     sns.barplot(
         data=df_grouped,
         x='매출월',
         y='금액',
         hue='매출년도',
-        ax=ax
+        ax=ax1
     )
-    ax.yaxis.set_major_formatter(FuncFormatter(million_formatter))
-    ax.set_ylabel('매출액 (백만원)')
-        
-    ax = ax.twinx()
+    ax1.yaxis.set_major_formatter(FuncFormatter(million_formatter))
+    ax1.set_ylabel('매출액 (백만원)')
+
+    ax2 = ax1.twinx()
     sns.lineplot(
         data=df_growth,
         x='매출월',
         y='금액 증감률(%)',
-        ax=ax,
+        ax=ax2,
         lw=1.5,
         color='red'
-        )
-    ax.set_title('직전년도 대비 월별 매출액 추이 및 증감률(%)')
+    )
+    y1_min, y1_max = 1200, 2000 # ax1 = y축 {금액.min(), 금액.max()}
+    y2_min, y2_max = -40, 40 # ax2 = y축 {금액 증감률(%).min(), 금액 증감률(%).max()}
+    
+    ax1.set_ylim(y1_min, y1_max)
+    ax2.set_ylim(y2_min, y2_max)
+    ax1.yaxis.set_major_locator(MaxNLocator(4))
+    ax2.yaxis.set_major_locator(MaxNLocator(4))
+
+    fig4.suptitle('직전년도 대비 월별 매출액 추이 및 증감률(%)')
 
 
     return fig1, fig2, fig3, fig4
