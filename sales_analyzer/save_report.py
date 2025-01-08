@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
 import pandas as pd
-
+from matplotlib.backends.backend_pdf import PdfPages
 
 def save_result(
     file_path: Path,
@@ -9,7 +9,9 @@ def save_result(
     monthly_report: pd.DataFrame,
     customer_report: pd.DataFrame,
     product_report: pd.DataFrame,
-    charts: tuple
+    yearly_chart: tuple,
+    customer_chart: tuple,
+    fig: tuple
 ) -> None:
 
     directory = file_path.parent / '연간 매출 보고서'
@@ -29,11 +31,14 @@ def save_result(
         product_report.to_excel(writer, sheet_name='품목별 매출액')
 
 
-    charts[0].figure.savefig(directory / '월별 매출액 추이.pdf')
-    charts[1].figure.savefig(directory / '월별 매출 분포도.pdf')
-    charts[2].figure.savefig(directory / '연도별 판매량 대비 매출액 분산도.pdf')
-    charts[3].figure.savefig(directory / '직전년도 대비 월별 매출액 추이 및 증감률(%).pdf')
+    yearly_chart[0].figure.savefig(directory / '월별 매출액 추이.pdf')
+    # yearly_chart[1].figure.savefig(directory / '월별 매출 분포도.pdf')
+    # yearly_chart[2].figure.savefig(directory / '연도별 판매량 대비 매출액 분산도.pdf')
+    yearly_chart[3].figure.savefig(directory / '직전년도 대비 월별 매출액 추이 및 증감률(%).pdf')
+    customer_chart.figure.savefig(directory / '5억원 이상 거래처 매출액 추이.pdf')
 
-    # monthly_report.to_csv(path_or_buf= directory / '월별 매출액.csv', encoding='utf-8-sig')
+    with PdfPages(directory / '거래처별 매출액 점유율.pdf') as pdf:
+        for figure in fig:
+            pdf.savefig(figure)
 
     print(f'"{directory}"에 저장되었습니다.')

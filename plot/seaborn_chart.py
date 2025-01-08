@@ -10,11 +10,11 @@ plt.rcParams['axes.unicode_minus'] = False
 sns.set_style("whitegrid")
 
 def yearly_report_chart(
-    df_grouped: pd.DataFrame, valid_years: List[int]
+    df_grouped: pd.DataFrame,
+    valid_years: List[int]
 ) -> tuple:
 
     df_grouped['금액'] = df_grouped['금액'] / 1_000_000
-
 
     # 연도별 매출액 추이
     fig1, ax = plt.subplots()
@@ -77,8 +77,7 @@ def yearly_report_chart(
         '매출월',
         '금액'
         ).reset_index(names=['매출월'])
-    df_growth.columns = ['매출월', '금액 증감량', '금액 증감률(%)']
-    df_growth['매출월'] = df_growth['매출월'].astype(str)
+    df_growth = df_growth.set_index('매출월').droplevel(0, axis=1)
 
     fig4, ax1 = plt.subplots()
     sns.barplot(
@@ -95,7 +94,7 @@ def yearly_report_chart(
     sns.lineplot(
         data=df_growth,
         x='매출월',
-        y='금액 증감률(%)',
+        y='전년 대비 증감률(%)',
         ax=ax2,
         lw=1.5,
         color='red'

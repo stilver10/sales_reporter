@@ -33,23 +33,19 @@ def sales_order_customer(
         # 최근 1년의 수량과 금액만 반환
         return df_pivot
 
-    df_quantity = calculate_growth(df_grouped, valid_years, index_column, value_column = '수량')
-    df_sales = calculate_growth(df_grouped, valid_years, index_column, value_column = '금액')
+    qnt_df = calculate_growth(df_grouped, valid_years, index_column, value_column = '수량')
+    sales_df = calculate_growth(df_grouped, valid_years, index_column, value_column = '금액')
+
+
+    customer_report = pd.concat(
+        [df_pivot[['수량']],
+        qnt_df,
+        df_pivot[['금액']],
+        sales_df
+        ],
+        axis=1
+    )
     
-
-    # MultiIndex를 명시적으로 설정
-    df_quantity.columns = pd.MultiIndex.from_tuples(df_quantity.columns)
-    df_sales.columns = pd.MultiIndex.from_tuples(df_sales.columns)
-
-    # 레벨 교환 및 정렬
-    df_quantity = df_quantity.swaplevel(0, 1, axis=1)
-    df_quantity.sort_index(axis=1, level=0, inplace=True)
-    df_sales = df_sales.swaplevel(0, 1, axis=1)
-    df_sales.sort_index(axis=1, level=0, inplace=True)
-
-    customer_report = pd.concat([df_pivot, df_quantity, df_sales], axis= 'columns')
-    # df_order_customer = merge_quantity_and_sales(df_quantity, df_sales)
-
     return customer_report, df_grouped
 
 
@@ -82,21 +78,17 @@ def sales_order_product(
         # 최근 1년의 수량과 금액만 반환
         return df_pivot
 
-    df_quantity = calculate_growth(df_grouped, valid_years, index_column, value_column = '수량')
-    df_sales = calculate_growth(df_grouped, valid_years, index_column, value_column = '금액')
+    qnt_df = calculate_growth(df_grouped, valid_years, index_column, value_column = '수량')
+    sales_df = calculate_growth(df_grouped, valid_years, index_column, value_column = '금액')
+
+
+    product_report = pd.concat(
+        [df_pivot[['수량']],
+        qnt_df,
+        df_pivot[['금액']],
+        sales_df
+        ],
+        axis=1
+    )
     
-
-    # MultiIndex를 명시적으로 설정
-    df_quantity.columns = pd.MultiIndex.from_tuples(df_quantity.columns)
-    df_sales.columns = pd.MultiIndex.from_tuples(df_sales.columns)
-
-    # 레벨 교환 및 정렬
-    df_quantity = df_quantity.swaplevel(0, 1, axis=1)
-    df_quantity.sort_index(axis=1, level=0, inplace=True)
-    df_sales = df_sales.swaplevel(0, 1, axis=1)
-    df_sales.sort_index(axis=1, level=0, inplace=True)
-
-    product_report = pd.concat([df_pivot, df_quantity, df_sales], axis= 'columns')
-    # df_order_customer = merge_quantity_and_sales(df_quantity, df_sales)
-
     return product_report, df_grouped

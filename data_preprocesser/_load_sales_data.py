@@ -20,11 +20,6 @@ def load_sales_data(file_path: Path) -> pd.DataFrame:
         raw_data['금액'] = raw_data['금액'].replace(r'^\s*$', '0', regex=True).astype(float)
 
 
-        # 무한대 값 제거 및 단가가 0인 경우 금액을 0으로 설정
-        # raw_data.replace([np.inf, -np.inf], np.nan, inplace=True)
-        # raw_data.loc[raw_data['단가'] == 0, '금액'] = 0
-
-
         #  값의 무결성 확인 (수량*단가 == 금액) 
         integrity = raw_data.apply(lambda row: row['수량'] * row['단가'], axis=1)
         raw_data['이상값'] = raw_data['금액'] != integrity

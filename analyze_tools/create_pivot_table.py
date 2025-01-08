@@ -13,7 +13,9 @@ def generate_pivot_table(
     columns_to_group = [value_column] + ([value_column2] if value_column2 is not None else [])
 
     df = df_grouped.pivot(
-        index=index_column, columns='매출년도', values=columns_to_group
+        index=index_column,
+        columns='매출년도',
+        values=columns_to_group
     )
 
     return df
