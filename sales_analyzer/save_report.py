@@ -31,11 +31,9 @@ def save_result(
         product_report.to_excel(writer, sheet_name='품목별 매출액')
 
 
-    yearly_chart[0].figure.savefig(directory / '월별 매출액 추이.pdf')
-    # yearly_chart[1].figure.savefig(directory / '월별 매출 분포도.pdf')
-    # yearly_chart[2].figure.savefig(directory / '연도별 판매량 대비 매출액 분산도.pdf')
-    yearly_chart[3].figure.savefig(directory / '직전년도 대비 월별 매출액 추이 및 증감률(%).pdf')
-    customer_chart.figure.savefig(directory / '5억원 이상 거래처 매출액 추이.pdf')
+    yearly_chart[0].figure.savefig(directory / '연도별 판매량 대비 매출액 기울기.pdf', bbox_inches = 'tight')
+    yearly_chart[1].figure.savefig(directory / '월별 매출액 추이 및 증감률(%).pdf')
+    customer_chart.figure.savefig(directory / '상위 거래처 10곳 매출액 추이.pdf')
 
     with PdfPages(directory / '거래처별 매출액 점유율.pdf') as pdf:
         for figure in fig:

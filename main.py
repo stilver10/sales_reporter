@@ -10,7 +10,7 @@ def main():
     print(f'저장 파일 위치: {current_directory}')
 
     # 데이터베이스 파일 경로 설정
-    db_file_path = Path("C:/Users/stilv/Downloads/매출 데이터베이스.xlsx")
+    db_file_path = Path("C:/Users/stilv/OneDrive/바탕 화면/매출 데이터베이스.xlsx")
     print(f'db 파일 경로: {db_file_path}')
 
     # 원본 데이터 로드
@@ -20,7 +20,7 @@ def main():
 
     monthly_report, monthly_grouped = monthly_sales_and_revenue(raw_data, valid_years)
     customer_report, cusomer_grouped = sales_order_customer(raw_data, valid_years)
-    product_report, _ = sales_order_product(raw_data, valid_years)
+    product_report, product_grouped = sales_order_product(raw_data, valid_years)
 
     yearly_chart = yearly_report_chart(monthly_grouped, valid_years)
     customer_chart = customer_historical_chart(cusomer_grouped)
@@ -29,7 +29,7 @@ def main():
     charts = []
     charts.append(yearly_chart)
     charts.append(customer_chart)
-    # charts.extend(fig)
+    charts.extend(fig)
     # test_chart(cusomer_grouped, valid_years)
 
     save_result(

@@ -3,14 +3,14 @@ from typing import List
 from analyze_tools import calculate_growth
 
 
-def sales_order_customer(
+def sales_order_product(
     raw_data: pd.DataFrame, valid_years: List[int]
 ) -> pd.DataFrame:
     """
     고객별 매출 데이터를 처리하고 반환하는 메소드.
     """
 
-    index_column = '거래처명'
+    index_column = '제품명'
 
     filtered_data = raw_data[raw_data['매출년도'].isin(valid_years)]
     df_grouped = (
@@ -43,7 +43,7 @@ def sales_order_customer(
     qnt_share_df = calculate_growth(df_grouped, valid_years, index_column, value_column = '수량_점유율(%)')
     sales_share_df = calculate_growth(df_grouped, valid_years, index_column, value_column = '금액_점유율(%)')
 
-    customer_report = pd.concat(
+    product_report = pd.concat(
         [df_pivot[['수량']],
         qnt_df,
         df_pivot[['금액']],
@@ -56,4 +56,4 @@ def sales_order_customer(
         axis=1
     )
 
-    return customer_report, df_grouped
+    return product_report, df_grouped

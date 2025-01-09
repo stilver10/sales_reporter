@@ -61,30 +61,53 @@ def customer_report_chart(
 def customer_historical_chart(
     df_grouped: pd.DataFrame,
 ) -> tuple:
-    
-    data = df_grouped[df_grouped['금액'] > 800_000_000].set_index(keys='매출년도')
-    data['금액'] = data['금액'] / 1_000_000
-    data = data.sort_values(by=('금액'), ascending=False).reset_index()
-    print(data)
+    data = (df_grouped.groupby('매출년도')
+            .apply(lambda x: x.nlargest(10, '금액'))
+            .reset_index(level=[0,1], drop=True)
+            )
+    data['금액'] = data['금액'] / 100_000_000
+
     fig, ax = plt.subplots()
-    sns.lineplot(
+    sns.barplot(
         data=data,
         x='매출년도',
         y='금액',
         hue='거래처명',
-        # style="거래처명",
-        markers=True,
+        palette='tab10',
         ax=ax
     )
+    plt.legend(loc='upper right', fontsize='xx-small')
+    handles, labels = ax.get_legend_handles_labels()  # 범례 핸들과 라벨 가져오기
+    for i, container in enumerate(ax.containers):
+        hue_label = labels[i]  # i번 컨테이너와 i번 라벨을 매핑
+        for bar in container:
+            bar_x = bar.get_x() + bar.get_width() / 2.0
+            bar_height = bar.get_height()
+
+            # 막대 위에 hue_label 표시
+            ax.text(
+                x=bar_x,
+                y=bar_height,
+                s=hue_label,
+                ha='center',
+                va='bottom',
+                fontsize=4,
+                rotation=90
+            )
+
+    # y축 포매터 세팅(백만원 단위로 표시)
     ax.yaxis.set_major_formatter(FuncFormatter(million_formatter))
-    ax.set_ylabel('매출액 (백만원)')
-    ax.set_title('5억원 이상 거래처 매출액 추이')
+    ax.set_ylabel('매출액 (억 원)')
+    ax.set_title('상위 거래처 10곳 매출액 추이')
+
+    # x축 눈금: 매년 하나씩 표시되도록 설정 (필요시 주석 처리)
     ax.xaxis.set_major_locator(plt.MultipleLocator(1))
-    # ax.xaxis.set_major_formatter(plt.FormatStrFormatter('%d'))
-    y_min = data['금액'].min() * 0.9  # 최소값에서 10% 여유
-    y_max = data['금액'].max() * 1.1  # 최대값에서 10% 여유
+
+    # y축 최소/최대 범위 설정 (10% 여유)
+    y_min = data['금액'].min() * 0.9
+    y_max = data['금액'].max() * 1.1
     ax.set_ylim(y_min, y_max)
-    
+
     return fig
 
 
