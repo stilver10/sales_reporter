@@ -30,48 +30,49 @@ def monthly_sales_and_revenue(
 
         return monthly_report
 
+    df_first_half = (
+        df_grouped[df_grouped[index_column].between(1, 6)]
+        .groupby('매출년도')[['수량', '금액']]
+        .sum()
+        .reset_index()
+    )
+    df_first_half[index_column] = '상반기 소계'
+    
+    df_second_half = (
+        df_grouped[df_grouped[index_column].between(7, 12)]
+        .groupby('매출년도')[['수량', '금액']]
+        .sum()
+        .reset_index()
+    )
+    df_second_half[index_column] = '하반기 소계'
+
+    df_year_total = (
+        df_grouped
+        .groupby('매출년도')[['수량', '금액']]
+        .sum()
+        .reset_index()
+    )
+    df_year_total[index_column] = '연간 합계'
+    
+    df_subtotals = pd.concat([df_grouped, df_first_half, df_second_half, df_year_total], ignore_index=True)
+
+
+    qnt_df = calculate_growth(df_subtotals, valid_years[-2:], index_column, '수량').swaplevel(axis=1)
+    sales_df = calculate_growth(df_subtotals, valid_years[-2:], index_column, '금액').swaplevel(axis=1)
+
 
     column_order = [(year, metric) for year in sorted(valid_years) for metric in ['수량', '금액']]
-    df_monthly = df_pivot.swaplevel(0, 1, axis=1).reindex(columns=column_order)
+    df_pivot = df_subtotals.pivot(index=index_column, columns='매출년도', values=['수량', '금액'])
+    df_pivot = df_pivot.swaplevel(0, 1, axis=1).reindex(columns=column_order)
 
-    qnt_df = calculate_growth(df_grouped, valid_years[-2:], index_column, '수량').swaplevel(axis=1)
-    sales_df = calculate_growth(df_grouped, valid_years[-2:], index_column, '금액').swaplevel(axis=1)
-    
-
-
-    original_index = df_monthly.index.tolist()
-    
-    first_half = df_monthly.iloc[0:6].sum()
-    second_half = df_monthly.iloc[6:12].sum()
-    total = df_monthly.sum()
-    
-    subtotals_df = pd.DataFrame([
-        first_half,
-        second_half,
-        total
-    ], index=['상반기 소계', '하반기 소계', '연간 합계'])
-    
-    new_index = []
-    for i, idx in enumerate(original_index):
-        new_index.append(idx)
-        if idx == 6:
-            new_index.append('상반기 소계')
-        elif idx == 12:
-            new_index.append('하반기 소계')
-            new_index.append('연간 합계')
-
-    
+    new_index = [
+        1, 2, 3, 4, 5, 6, '상반기 소계', 
+        7, 8, 9, 10, 11, 12, '하반기 소계', 
+        '연간 합계'
+    ]
     monthly_report = pd.concat(
-        [df_monthly,
-        qnt_df[['전년 대비 증감률(%)']],
-        sales_df[['전년 대비 증감률(%)']],
-        ],
+        [df_pivot, qnt_df[['전년 대비 증감률(%)']], sales_df[['전년 대비 증감률(%)']]], 
         axis=1
-    )
-    monthly_report = pd.concat(
-        [monthly_report,
-        subtotals_df
-        ]
     ).reindex(new_index)
 
 

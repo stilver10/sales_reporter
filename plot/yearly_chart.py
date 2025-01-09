@@ -48,7 +48,7 @@ def yearly_report_chart(
         hue='매출년도',
         col='매출년도',
     )
-    fig3.figure.suptitle('연도별 판매량 대비 매출액 기울기(그래프 기울기가 가파를수록 톤 수 대비 매출이 올라감)', position = (0.5, 1.0+0.05))
+    fig3.figure.suptitle('연도별 판매량 대비 매출액 기울기(그래프 기울기가 가파를수록 판매 단위당 매출 증가폭이 큼)', position = (0.5, 1.0+0.05))
     for ax in fig3.axes.flat:
         ax.yaxis.set_major_formatter(FuncFormatter(million_formatter))
         ax.set_ylabel('매출액 (억 원)')

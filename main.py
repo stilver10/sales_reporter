@@ -30,7 +30,6 @@ def main():
     charts.append(yearly_chart)
     charts.append(customer_chart)
     charts.extend(fig)
-    # test_chart(cusomer_grouped, valid_years)
 
     save_result(
         current_directory,
