@@ -1,7 +1,7 @@
 import os 
 from pathlib import Path
 from data_preprocesser import load_sales_data, calculate_years
-from sales_analyzer import monthly_sales_and_revenue, sales_order_customer, sales_order_product, save_result
+from sales_analyzer import monthly_sales_and_revenue, sales_order_customer, sales_order_product, save_result, merge_product_data
 from plot import yearly_report_chart, customer_report_chart, customer_historical_chart
 
 def main():
@@ -19,12 +19,13 @@ def main():
     print('조회년도:', valid_years)
 
     monthly_report, monthly_grouped = monthly_sales_and_revenue(raw_data, valid_years)
-    customer_report, cusomer_grouped = sales_order_customer(raw_data, valid_years)
+    customer_report, customer_grouped = sales_order_customer(raw_data, valid_years)
     product_report, product_grouped = sales_order_product(raw_data, valid_years)
+    merge_product_data(raw_data, valid_years)
 
     yearly_chart = yearly_report_chart(monthly_grouped, valid_years)
-    customer_chart = customer_historical_chart(cusomer_grouped)
-    fig = customer_report_chart(cusomer_grouped, valid_years)
+    customer_chart = customer_historical_chart(customer_grouped)
+    fig = customer_report_chart(customer_grouped, valid_years)
 
     charts = []
     charts.append(yearly_chart)
