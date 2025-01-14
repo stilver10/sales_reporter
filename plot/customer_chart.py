@@ -135,14 +135,6 @@ def customer_historical_chart(
         year_top3 = top10.iloc[:3].copy()
         year_top4_10 = top10.iloc[3:].copy()
 
-        # (3) 만약 top3 안에 '동서'가 있고, top4_10 안에 '(동서)'가 있으면
-        #     '(동서)'를 top3로 이동
-        if '동서' in year_top3['거래처명'].values:
-            if '(동서)' in year_top4_10['거래처명'].values:
-                row = year_top4_10[year_top4_10['거래처명'] == '(동서)']
-                year_top3 = pd.concat([year_top3, row], ignore_index=True)
-                year_top4_10 = year_top4_10.drop(row.index)
-
         # (4) '매출년도' 컬럼 부착 (groupby 이후 level이 사라지므로)
         year_top3['매출년도'] = year
         year_top4_10['매출년도'] = year
@@ -158,36 +150,7 @@ def customer_historical_chart(
     top3['금액'] = top3['금액'] / 100_000_000
     top4_10['금액'] = top4_10['금액'] / 100_000_000
 
-    # -----------------------------
-    # 1) '거래처명' 카테고리 순서 지정 (동서, (동서) 먼저)
-    # -----------------------------
-    custom_order = ['동서', '(동서)']
-
-    # (2-1) 우선 두 DataFrame에 등장하는 거래처명 전체를 합쳐서 유니크값 리스트 구함
-    all_names = pd.concat([top3['거래처명'], top4_10['거래처명']]).unique().tolist()
-    # '동서', '(동서)' 제외
-    the_rest = [n for n in all_names if n not in custom_order]
-    final_categories = custom_order + the_rest  # 동서, (동서) 먼저
-
-    # (2-2) 두 DF에 동일한 카테고리를 적용
-    top3['거래처명'] = pd.Categorical(top3['거래처명'], categories=final_categories, ordered=True)
-    top4_10['거래처명'] = pd.Categorical(top4_10['거래처명'], categories=final_categories, ordered=True)
-
-    # -----------------------------
-    # 2) Bar 차트용 팔레트 구성
-    # -----------------------------
-    base_colors = list(plt.cm.tab20.colors)
-    color_dict = {}
-    used_index = 0
-    for name in final_categories:
-        if name == '동서':
-            color_dict[name] = '#c7fdb5'
-        elif name == '(동서)':
-            color_dict[name] = '#aaff32'
-        else:
-            color_dict[name] = base_colors[used_index % len(base_colors)]
-            used_index += 1
-
+    base_colors = list(plt.cm.tab10.colors)
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5), sharey=False)
     sns.barplot(
@@ -195,8 +158,8 @@ def customer_historical_chart(
         x='매출년도',
         y='금액',
         hue='거래처명',
-        palette=color_dict,        # palette='tab10',
-        hue_order=final_categories,  # 순서 고정
+        palette=base_colors,        # palette='tab10',
+        width=1,
         ax=ax1
     )
     ax1.set_title('각 연도별 상위 3곳')
@@ -215,7 +178,7 @@ def customer_historical_chart(
                 s=hue_label,
                 ha='center',
                 va='bottom',
-                fontsize=4,
+                fontsize=8,
                 rotation=90
             )
     ax1_names = top3['거래처명'].unique().tolist()
@@ -225,6 +188,7 @@ def customer_historical_chart(
     filtered_handles_1 = [handles1[i] for i in filtered_indices_1]
     filtered_labels_1 = [labels1[i] for i in filtered_indices_1]
     ax1.legend(filtered_handles_1, filtered_labels_1, loc='upper right', fontsize=4)
+
     y_min1 = top3['금액'].min() * 0.9
     y_max1 = top3['금액'].max() * 1.1
     ax1.set_ylim(y_min1, y_max1)
@@ -235,8 +199,8 @@ def customer_historical_chart(
         x='매출년도',
         y='금액',
         hue='거래처명',
-        palette=color_dict,        # palette='tab10',
-        hue_order=final_categories,  # 순서 고정
+        palette=base_colors,        # palette='tab10',
+        width=0.9,
         ax=ax2
     )
 

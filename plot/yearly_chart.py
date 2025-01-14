@@ -47,7 +47,20 @@ def yearly_report_chart(
 
 
     # 연도별 판매량 대비 매출액 분산도
-    sns.set_color_codes("pastel")
+    fig3 = sns.lmplot(
+        data=df_grouped,
+        x='수량',
+        y='금액',
+        hue='매출년도',
+        col='매출년도',
+        col_wrap=3  # 한 행에 최대 3개 서브플롯
+    )
+    fig3.figure.suptitle('연도별 판매량 대비 매출액 분산도', y=1.05)
+    for ax in fig3.axes.flat:
+        ax.yaxis.set_major_formatter(FuncFormatter(million_formatter))
+        ax.set_ylabel('매출액 (백만원)')
+
+    """sns.set_color_codes("pastel")
     fig3, ax1 = plt.subplots()
     sns.barplot(
         data=df_grouped,
@@ -69,7 +82,7 @@ def yearly_report_chart(
     )
     fig3.figure.suptitle('연도별 판매량 대비 매출액')
     ax1.yaxis.set_major_formatter(FuncFormatter(million_formatter))
-    ax1.set_ylabel('매출액 (억 원)')
+    ax1.set_ylabel('매출액 (억 원)') """
     """y1_min, y1_max = df_grouped['금액'].min() * 0.9, df_grouped['금액'].max() * 1.1
     y2_min, y2_max = df_grouped['수량'].min() * 0.9, df_grouped['수량'].max() * 1.1
     # 매출액 y축 간격 계산 (소수점 없이)

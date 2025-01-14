@@ -5,8 +5,9 @@ def merge_product_data(
 ) -> pd.DataFrame:
 
     product_list = pd.read_csv("C:/Users/stilv/OneDrive/바탕 화면/2024_거래제품명.csv")
-
-
+    product_list = product_list.sort_values(['제품군', '제품명'])
+    print(product_list)
+    product_list.to_csv('product_list.csv', index=False, encoding='utf-8-sig')
     filtered_data = raw_data[raw_data['매출년도'] == (valid_years[-1])]
     filtered_data2 = pd.DataFrame(filtered_data['제품명'].unique(), columns=['제품명'])
     result = (pd.merge(product_list, filtered_data, on='제품명')

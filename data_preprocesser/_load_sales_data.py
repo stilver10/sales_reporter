@@ -31,17 +31,17 @@ def load_sales_data(file_path: Path) -> pd.DataFrame:
         raw_data.loc[
             (raw_data['거래처명'] == '유림식품') & 
             (raw_data['제품명'].isin(['둥굴레분말', '볶은-현미', '배합비']))
-            , '거래처명'] = '(동서)'
+            , '거래처명'] = '동서'
 
         raw_data.loc[
             (raw_data['거래처명'] == '신우식품') &
             (raw_data['제품명'].isin(['둥굴레분말', '볶은-현미']))
-            , '거래처명'] = '(동서)'
+            , '거래처명'] = '동서'
 
         raw_data.loc[
             (raw_data['거래처명'] == '동천') &
             (raw_data['제품명'].isin(['둥굴레믹스', '볶은-현미']))
-            , '거래처명'] = '(동서)' 
+            , '거래처명'] = '동서' 
 
         return raw_data, missing_value
 
